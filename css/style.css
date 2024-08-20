@@ -852,7 +852,7 @@ a:focus {
   border: 2px solid #5a9;
   border-right: none;
   border-radius: 10px 0 0 10px;
-  padding: 10px 15px;
+  padding: 10px 20px;
   background-color: #f9f9f9;
   font-size: 16px;
   width: calc(100% - 120px); /* Adjust width to ensure it fits alongside the button */
@@ -946,6 +946,10 @@ a:focus {
   overflow: auto; 
   background-color: rgb(0,0,0); 
   background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-title{
+  display: inline;
 }
 
 /* Modal Content */
