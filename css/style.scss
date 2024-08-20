@@ -768,3 +768,21 @@ a:focus {
 
 
 // end footer section
+
+//Text Input Box
+
+.custom-input {
+  border: 2px solid #5a9;
+  border-radius: 10px;
+  padding: 10px 15px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+}
+.custom-input:focus {
+  border-color: #2c3e50;
+  background-color: #e9f5ee;
+  box-shadow: 0px 0px 5px rgba(92, 184, 92, 0.8);
+  outline: none;
+}
+

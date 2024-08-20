@@ -55,3 +55,91 @@ function showActivity(){
     }
     
 }
+
+// Get modal element
+var modal = document.getElementById("myModal");
+
+// Get open modal button
+var openModalBtn = document.getElementById("openModalBtn");
+
+// Get close button
+var closeModalBtn = document.getElementsByClassName("close")[0];
+
+// Listen for open click
+openModalBtn.addEventListener("click", function() {
+    modal.style.display = "block";
+});
+
+// Listen for close click
+closeModalBtn.addEventListener("click", function() {
+    modal.style.display = "none";
+});
+
+// Close modal on clicking anywhere outside the modal
+window.addEventListener("click", function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+});
+
+function popupModal(){
+    setTimeout(function() {
+    $('#exampleModal').modal();
+    const start = () => {
+      setTimeout(function() {
+        confetti.start()
+      }, 600); // 1000 is time that after 1 second start the confetti ( 1000 = 1 sec)
+    };
+    const stop = () => {
+      setTimeout(function() {
+        confetti.stop()
+      }, 5000); // 5000 is time that after 5 second stop the confetti ( 5000 = 5 sec)
+    };
+    start();
+        stop();
+    },500);
+    changeColor();
+    startCounting();
+   
+  }
+  
+  function changeColor(){
+    $('#formative').css('background-color', '#78ABA8');
+    $('#formative').css('animation', 'typing 3s steps(30, end) 1s 1 normal both, blink-caret .75s step-end infinite');
+
+    $('#alternative').css('background-color', '#C8CFA0');
+    $('#quarter').css('background-color', '#FCDC94');
+    $('#gradefinal').css('background-color', '#EF9C66');
+  }
+
+  function startCounting() {
+    const countElements = {
+      formative: { element: document.getElementById('formative-score'), end: 85 }, // Example value
+      alternative: { element: document.getElementById('alternative-score'), end: 90 }, // Example value
+      longTest: { element: document.getElementById('longtest-score'), end: 75 }, // Example value
+      grade: { element: document.getElementById('grade-display'), end: 98 } // Example value
+    };
+
+    function countUp(element, endValue) {
+      let startValue = 0;
+      const duration = 3000; // Duration in milliseconds
+      const increment = endValue / (duration / 100);
+      const interval = setInterval(() => {
+        startValue += increment;
+        if (startValue >= endValue) {
+          startValue = endValue;
+          clearInterval(interval);
+        }
+        element.textContent = Math.floor(startValue);
+      }, 100);
+    }
+
+   
+      countUp(countElements.formative.element, countElements.formative.end);
+      countUp(countElements.alternative.element, countElements.alternative.end);
+      countUp(countElements.longTest.element, countElements.longTest.end);
+      countUp(countElements.grade.element, countElements.grade.end);
+   
+    console.log(countElements.formative.end);
+  }
+

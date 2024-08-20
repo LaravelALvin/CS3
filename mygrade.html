@@ -29,6 +29,11 @@
   <!-- responsive style -->
   <link href="css/responsive.css" rel="stylesheet" />
 
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.0/dist/confetti.browser.min.js"></script>
+ 
+
 </head>
 
 <body class="sub_page">
@@ -75,29 +80,70 @@
    <section class="about_section layout_padding long_section">
     <div class="container">
       <div class="row">
-        <div class="col-md-6">
-          <div class="img-box">
-            <img src="images/viewgrade.png" alt="">
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="detail-box">
-            <div class="heading_container">
-              <h2>
-               Coming soon...
-              </h2>
-            </div>
-            <p>
-             
-            </p>
-            <a href="">
-              Read More
-            </a>
+        <div class="container mt-5 col-md-8">
+          <div class="d-flex">
+            <input type="text" class="custom-input" placeholder="Enter your email here">
+            <button class="custom-button" type="button"  data-toggle="modal" data-target="#gradeModal">Get Code</button>
           </div>
         </div>
       </div>
-    </div>
+      
+      <div class="row">
+        <div class="score-table mt-5 col-md-8">
+          <table class="table">
+            <thead>
+              <th>YOUR NAME HERE</th>
+              <th></th>
+            </thead>
+            <tbody>
+              <tr id="formative">
+                <td>Formative Assessments</td>
+                <td><span id="formative-score">0</span>/100</td>
+              </tr>
+              <tr id="alternative">
+                <td>Alternative Assessments</td>
+                <td><span id="alternative-score">0</span>/100</td>
+              </tr>
+              <tr id="quarter">
+                <td>Quarter Exam</td>
+                <td><span id="longtest-score">0</span>/100</td>
+              </tr>
+              <tr id="gradefinal">
+                <td class="grade-display">Final Grade</td>
+                <td class="grade-display"><span id="grade-display">0</span>%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      
   </section>
+
+<!-- Modal -->
+<div class="modal fade" id="gradeModal" tabindex="-1" role="dialog" aria-labelledby="gradeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="gradeModalLabel">Verification</h5>
+        
+      </div>
+      <div class="modal-body">
+        
+        <div class="container">
+          <img src="images/chekc.png" width="15%"><span>Enter the code sent to your email</span>
+          <div class="d-flex mt-4">
+            <input type="text" class="custom-input" placeholder="Enter the code here">
+            <button class="custom-button" type="button"  data-toggle="modal" data-target="#gradeModal" onclick="popupModal()">Submit</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="popupModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- end about section -->
 
@@ -120,7 +166,7 @@
   <!-- custom js -->
   <script src="js/custom.js"></script>
   <!-- Google Map -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
+  <script src="js/confetti.js"></script>
   <!-- End Google Map -->
 
 </body>
