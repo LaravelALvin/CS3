@@ -51,6 +51,7 @@ function showActivity(){
         visibleActivity = true;
     }else{
         $('#myDiv').addClass('d-none');
+        $('#showButton').html('Show Activity');
         visibleActivity = false;
     }
     
