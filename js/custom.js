@@ -68,15 +68,36 @@ function showFAActivity(){
   // Trigger reflow to restart animation (necessary for CSS animations)
   void inputField.offsetWidth;
 
-  if (inputValue !== "Long-Weekend") {
+switch(inputValue){
+  case "Long-Weekend":{
+    $('#gradeModal').modal('hide');
+    $('#lithiumFA1').removeClass('d-none');
+    $('#btnShowActivity').remove();
+    break;
+  }
+  case "Sodium-Mall":{
+    $('#gradeModal').modal('hide');
+    $('#sodiumFA1').removeClass('d-none');
+    $('#btnShowActivity').remove();
+    break;
+  }
+  case "2024-Barium-FA1":{
+    $('#gradeModal').modal('hide');
+    $('#bariumFA1').removeClass('d-none');
+    $('#btnShowActivity').remove();
+    break;
+  }
+  case "Calcium-FA1":{
+    $('#gradeModal').modal('hide');
+    $('#calciumFA1').removeClass('d-none');
+    $('#btnShowActivity').remove();
+    break;
+  }
+  default:
     inputField.classList.add('error', 'shake'); // Add the error class to make the border red
     errorMsg.textContent = "Invalid Code"; // Add error message
-   // Prevent form submission and page refresh
-}else{
-  $('#gradeModal').modal('hide');
-  $('#lithiumFA1').removeClass('d-none');
-  $('#btnShowActivity').remove();
 }
+
 
 }
 
