@@ -67,7 +67,7 @@ function showFAActivity(){
   // Trigger reflow to restart animation (necessary for CSS animations)
   void inputField.offsetWidth;
 
-  if (inputValue !== "2024-Barium-FA1") {
+  if (inputValue) {
     inputField.classList.add('error', 'shake'); // Add the error class to make the border red
     errorMsg.textContent = "Invalid Code"; // Add error message
    // Prevent form submission and page refresh
