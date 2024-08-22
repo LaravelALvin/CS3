@@ -1094,7 +1094,7 @@ a:focus {
   animation: shake 0.5s ease-in-out;
 }
 
-#myDiv{
+#calciumFA1, #bariumFA1, #sodiumFA1, #lithiumFA1{
   margin-left: 0;
 }
 
