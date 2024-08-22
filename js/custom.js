@@ -56,6 +56,9 @@ function showActivity(){
     }
     
 }
+
+$('#myDiv').removeClass('d-none');
+
 function showFAActivity(){
  
   const inputField = document.getElementById('inputCode');
