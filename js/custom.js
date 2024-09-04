@@ -93,6 +93,12 @@ switch(inputValue){
     $('#btnShowActivity').remove();
     break;
   }
+  case "Colors":{
+    $('#gradeModal').modal('hide');
+    $('#Colors').removeClass('d-none');
+    $('#btnShowActivity').remove();
+    break;
+  }
   default:
     inputField.classList.add('error', 'shake'); // Add the error class to make the border red
     errorMsg.textContent = "Invalid Code"; // Add error message
