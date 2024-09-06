@@ -1134,3 +1134,7 @@ a:focus {
   background: var(--color);
   color: #fff;
 }
+
+.nav-item.active .nav-link {
+ font-weight: bold; 
+}
