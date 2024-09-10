@@ -1138,3 +1138,23 @@ a:focus {
 .nav-item.active .nav-link {
  font-weight: bold; 
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container div for the iframe, taking up full viewport */
+.iframe-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+/* The iframe itself should take up 100% of its parent container */
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none; /* Optional: Remove the border around the iframe */
+}
