@@ -135,7 +135,7 @@ window.addEventListener("click", function(event) {
 
 function popupModal(){
     setTimeout(function() {
-    $('#exampleModal').modal();
+    $('#gradeModal').modal('hide');
     const start = () => {
       setTimeout(function() {
         confetti.start()
@@ -188,6 +188,14 @@ function popupModal(){
       countUp(countElements.grade.element, countElements.grade.end);
    
   }
+
+  function typeWriter() {
+    if (index < text.length) {
+        document.getElementById("output").innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeWriter, 100); // Adjust the speed by changing the timeout duration
+    }
+}
 
 
 
