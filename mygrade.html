@@ -69,10 +69,12 @@
 
     // Get a list of items from your "items" collection
     async function getItems() {
-        const itemsCol = collection(db, 'items');
-        const itemSnapshot = await getDocs(itemsCol);
-        const itemList = itemSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        return itemList;
+      $('#loadingModal').modal('show');
+      const itemsCol = collection(db, 'items');
+      const itemSnapshot = await getDocs(itemsCol);
+      const itemList = itemSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      $('#loadingModal').modal('hide');
+      return itemList;
     }
 
     async function setItems(email, code, item) {
@@ -95,11 +97,41 @@
       
   }
 
+  function getTimeDifference(datetime){
+    // Convert Firestore Timestamp to milliseconds
+    let firestoreMillis = (datetime.seconds * 1000) + (datetime.nanoseconds / 1e6); 
+    let currentMillis = Date.now();
+    let differenceMillis = currentMillis - firestoreMillis;
+    let differenceSeconds = differenceMillis / 1000;
+    return differenceSeconds;
+  }
+  let countdownInterval;
+
     async function getItemById(itemId) {
+      if (countdownInterval) clearInterval(countdownInterval);
       let randomCode = Math.floor(100000 + Math.random() * 900000);
       const items = await getItems();
-      const item = items.find(item => item.id === itemId); 
+      const item = items.find(item => item.id === itemId);
       if (item) {
+         let timeDif = getTimeDifference(item.lastAccess);
+         console.log(timeDif);
+        if (timeDif <= 25) {
+            let remainingSeconds = 25 - timeDif;
+            console.log(`Wait ${remainingSeconds.toFixed(2)} more seconds.`);
+            countdownInterval = setInterval(() => {
+            if (remainingSeconds > 0) {
+                generateCode.disabled = true;
+                generateCode.textContent = Math.ceil(remainingSeconds); // Update button text
+                remainingSeconds--;
+            } else {
+                // Time's up, enable the button
+                generateCode.textContent = "Get Code";
+                generateCode.disabled = false;
+                clearInterval(countdownInterval); // Stop the countdown
+            }
+        }, 1000);
+        } else {
+            
         setItems(itemId, randomCode, item);
         $('#gradeModal').modal('show');
           document.getElementById("generateGradeform").addEventListener("submit", function() {
@@ -108,7 +140,7 @@
             if (studCode.value.trim() === '') {
               studCode.focus();
             }else{
-              console.log(item.code);
+              
               if(studCode.value.trim() == randomCode){
                 startCounting(item.FA, item.AA, item.SE, parseFloat(item.grade) );
                 studentName.innerHTML = item.name;
@@ -116,15 +148,29 @@
                 changeColor();
                 
               }else{
-                $('#invalidCode').modal('show');
+                //$('#invalidCode').modal('show');
+                showError();
               }
             }
           });
+        }
+
       } else {
         $('#gradeModalFailed').modal('show');
           return 'item Not Found!';
       }
     }
+
+    function showError(inputElement) {
+      studentCode.classList.add('error', 'shake');
+      studentCode.setCustomValidity('Invalid code');
+      studentCode.reportValidity();
+
+      studentCode.addEventListener('animationend', function() {
+      studentCode.classList.remove('shake');
+      studentCode.setCustomValidity('');
+    }, { once: true });
+  }
 
 
 
@@ -158,9 +204,8 @@
     if (studentEmail.value.trim() === '') {
       studentEmail.focus();
     }else{
-
-      let studInfo = getItemById(studentEmail.value);
-
+      getItemById(studentEmail.value);
+      //$('#loadingModal').modal('show');
     }
   });
   </script>
@@ -296,13 +341,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="container">
-          <img src="images/chekc.png" width="10%" alt="Check Mark">
-          <h5 class="modal-title" id="gradeModalLabel">Verification</h5>
+          <img src="images/error.png" width="10%" alt="X Mark">
+          <h5 class="modal-title" id="gradeModalLabel">Error!</h5>
       </div>
       </div>
       <div class="modal-body">
         <div class="container">
-          <p>EMAIL NOT FOUND!</p>
+          <p>The email you entered is not found in the database.</p>
         </div>
       </div>
       <div class="modal-footer">
@@ -313,26 +358,22 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="invalidCode" tabindex="-1" role="dialog" aria-labelledby="gradeModalLabel" aria-hidden="true">
+<div class="modal" id="loadingModal" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <div class="container">
-          <img src="images/chekc.png" width="10%" alt="Check Mark">
-          <h5 class="modal-title" id="gradeModalLabel">Verification</h5>
-      </div>
-      </div>
-      <div class="modal-body">
-        <div class="container">
-          <p>INVALID CODE</p>
+          <center>
+            <div class="loader"></div>
+            <p> Please wait</p>
+          </center>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
+
+
 
   <!-- end about section -->
 
