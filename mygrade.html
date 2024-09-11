@@ -78,8 +78,10 @@
     async function setItems(email, code, item) {
       const itemsCol = collection(db, 'items');
       const itemDoc = doc(itemsCol, email); 
+      const currentDateTime = new Date();
       await updateDoc(itemDoc, {
-      code: code
+      code: code,
+      lastAccess: currentDateTime
     }).then(() => {
       emailjs.send('service_ilfaoun', 'template_1f0b65g', {
                     to_name: item.name,
