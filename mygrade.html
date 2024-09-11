@@ -108,7 +108,6 @@
             }else{
               console.log(item.code);
               if(studCode.value.trim() == randomCode){
-                
                 startCounting(item.FA, item.AA, item.SE, parseFloat(item.grade) );
                 studentName.innerHTML = item.name;
                 popupModal();
@@ -235,19 +234,19 @@
             <tbody>
               <tr id="formative">
                 <td>Formative Assessments</td>
-                <td><span id="formative-score">0</span>/100</td>
+                <td><span id="formative-score">0</span>/85 Points</td>
               </tr>
               <tr id="alternative">
                 <td>Alternative Assessments</td>
-                <td><span id="alternative-score">0</span>/100</td>
+                <td><span id="alternative-score">0</span>/100 Points</td>
               </tr>
               <tr id="quarter">
                 <td>Quarter Exam</td>
-                <td><span id="longtest-score">0</span>/100</td>
+                <td><span id="longtest-score">0</span>/250 Points</td>
               </tr>
               <tr id="gradefinal">
                 <td class="grade-display">Final Grade</td>
-                <td class="grade-display"><span id="grade-display">0</span>%</td>
+                <td class="grade-display"><span id="grade-display">100</span>%</td>
               </tr>
               
             </tbody>
