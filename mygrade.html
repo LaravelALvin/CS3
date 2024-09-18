@@ -67,6 +67,8 @@
     // Initialize Firestore
     const db = getFirestore(app);
 
+    const IPaddress = getIPAddress();
+
     // Get a list of items from your "items" collection
     async function getItems() {
       $('#loadingModal').modal('show');
@@ -80,10 +82,14 @@
     async function setItems(email, code, item) {
       const itemsCol = collection(db, 'items');
       const itemDoc = doc(itemsCol, email); 
+      const attempt = item.attempt;
       const currentDateTime = new Date();
       await updateDoc(itemDoc, {
       code: code,
-      lastAccess: currentDateTime
+      lastAccess: currentDateTime,
+      location: IPaddress,
+      attempt: parseInt(attempt + 1),
+      browser: getBrowserName()
     }).then(() => {
       emailjs.send('service_ilfaoun', 'template_1f0b65g', {
                     to_name: item.name,
@@ -115,6 +121,7 @@
       if (item) {
          let timeDif = getTimeDifference(item.lastAccess);
          console.log(timeDif);
+        
         if (timeDif <= 25) {
             let remainingSeconds = 25 - timeDif;
             console.log(`Wait ${remainingSeconds.toFixed(2)} more seconds.`);
@@ -131,7 +138,6 @@
             }
         }, 1000);
         } else {
-            
         setItems(itemId, randomCode, item);
         $('#gradeModal').modal('show');
           document.getElementById("generateGradeform").addEventListener("submit", function() {
@@ -200,14 +206,49 @@
   document.getElementById('myForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    var studentEmail = document.getElementById('studEmail');
+    var studentEmail = document.getElementById('studEmail').value;
     if (studentEmail.value.trim() === '') {
       studentEmail.focus();
     }else{
-      getItemById(studentEmail.value);
+      getItemById(studentEmail);
       //$('#loadingModal').modal('show');
     }
   });
+
+
+  async function getIPAddress() {
+  try {
+    let response = await fetch('https://api.ipify.org?format=json');
+    let data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error("Error fetching the IP address: ", error);
+  }
+   
+  }
+
+  function getBrowserName() {
+  const userAgent = navigator.userAgent;
+  let browserName = "Unknown";
+
+  if (userAgent.includes("Firefox")) {
+    browserName = "Mozilla Firefox";
+  } else if (userAgent.includes("Opera") || userAgent.includes("OPR")) {
+    browserName = "Opera";
+  } else if (userAgent.includes("Edg")) {
+    browserName = "Microsoft Edge";
+  } else if (userAgent.includes("Chrome")) {
+    browserName = "Google Chrome";
+  } else if (userAgent.includes("Safari")) {
+    browserName = "Safari";
+  } else if (userAgent.includes("MSIE") || userAgent.includes("Trident")) {
+    browserName = "Internet Explorer";
+  }
+
+  return browserName;
+}
+
+
   </script>
 
 </head>
