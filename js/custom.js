@@ -161,12 +161,13 @@ function popupModal(){
     $('#gradefinal').css('background-color', '#EF9C66');
   }
 
-  function startCounting(FA, AA, LT, grade) {
+  function startCounting(FA, AA, LT, grade, stanine) {
     const countElements = {
-      formative: { element: document.getElementById('formative-score'), end: FA }, // Example value
-      alternative: { element: document.getElementById('alternative-score'), end: AA }, // Example value
-      longTest: { element: document.getElementById('longtest-score'), end: LT }, // Example value
-      grade: { element: document.getElementById('grade-display'), end: grade } // Example value
+      formative: { element: document.getElementById('formative-score'), end: parseFloat(FA) }, // Example value
+      alternative: { element: document.getElementById('alternative-score'), end: parseFloat(AA) }, // Example value
+      longTest: { element: document.getElementById('longtest-score'), end: parseFloat(LT) }, // Example value
+      grade: { element: document.getElementById('grade-display'), end: parseFloat(grade) },
+      stanine: { element: document.getElementById('stanine'), end: parseFloat(stanine) } // Example value
     };
 
     function countUp(element, endValue) {
@@ -179,13 +180,14 @@ function popupModal(){
           startValue = endValue;
           clearInterval(interval);
         }
-        element.textContent = Math.floor(startValue);
+        element.textContent = parseFloat(startValue).toFixed(2);
       }, 100);
     }
       countUp(countElements.formative.element, countElements.formative.end);
       countUp(countElements.alternative.element, countElements.alternative.end);
       countUp(countElements.longTest.element, countElements.longTest.end);
       countUp(countElements.grade.element, countElements.grade.end);
+      countUp(countElements.stanine.element, countElements.stanine.end);
    
   }
 
