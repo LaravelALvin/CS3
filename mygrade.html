@@ -85,11 +85,11 @@
       code: code,
       lastAccess: currentDateTime
     }).then(() => {
-      // emailjs.send('service_ilfaoun', 'template_1f0b65g', {
-      //               to_name: item.Name,
-      //               message: code,
-      //               email: item.id,
-      // });
+      emailjs.send('service_ilfaoun', 'template_1f0b65g', {
+                    to_name: item.Name,
+                    message: code,
+                    email: item.id,
+      });
     })
     .catch((error) => {
       console.error("Error updating document: ", error);
