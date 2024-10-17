@@ -85,11 +85,11 @@
       code: code,
       lastAccess: currentDateTime
     }).then(() => {
-      emailjs.send('service_ilfaoun', 'template_1f0b65g', {
-                    to_name: item.Name,
-                    message: code,
-                    email: item.id,
-      });
+      // emailjs.send('service_ilfaoun', 'template_1f0b65g', {
+      //               to_name: item.Name,
+      //               message: code,
+      //               email: item.id,
+      // });
     })
     .catch((error) => {
       console.error("Error updating document: ", error);
@@ -115,13 +115,13 @@
       if (item) {
          let timeDif = getTimeDifference(item.lastAccess);
          console.log(timeDif);
-        if (timeDif <= 25) {
-            let remainingSeconds = 25 - timeDif;
+        if (timeDif <= 5) {
+            let remainingSeconds = 5 - timeDif;
             console.log(`Wait ${remainingSeconds.toFixed(2)} more seconds.`);
             countdownInterval = setInterval(() => {
             if (remainingSeconds > 0) {
                 generateCode.disabled = true;
-                generateCode.textContent = Math.ceil(remainingSeconds); // Update button text
+                generateCode.textContent = "try again after " + Math.ceil(remainingSeconds) + " seconds"; // Update button text
                 remainingSeconds--;
             } else {
                 // Time's up, enable the button
@@ -307,34 +307,33 @@
   </section>
   
 
-<!-- Modal -->
-<div class="modal fade" id="gradeModal" tabindex="-1" role="dialog" aria-labelledby="gradeModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="container">
-          <img src="images/chekc.png" width="10%" alt="Check Mark">
-          <h5 class="modal-title" id="gradeModalLabel">Verification</h5>
-      </div>
-      </div>
-      <div class="modal-body">
-        <div class="container">
-          <p>Enter the code sent to your email</p>
-          <form id="generateGradeform" class="container">
-            <div class="d-flex mt-4">
-              <input type="text" class="custom-input" placeholder="Enter the code here" id="studentCode" required>
-              <button id="generateGrade" class="custom-button" type="submit">Get Grade</button>
-            </div>
-          </form>
-          
+<!-- Modal -->  
+  <div class="modal fade" id="gradeModal" tabindex="-1" aria-labelledby="gradeModalLabel" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog"> 
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="container"> 
+            <img src="images/chekc.png" width="10%" alt="Check Mark">
+            <h5 class="modal-title" id="gradeModalLabel">Verification</h5>
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <div class="modal-body">
+          <div class="container">
+            <p>Enter the code sent to your email</p>
+            <form id="generateGradeform" class="container">
+              <div class="d-flex mt-4">
+                <input type="text" class="custom-input" placeholder="Enter the code here" id="studentCode" required>
+                <button id="generateGrade" class="custom-button" type="submit">Get Grade</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <strong style="color: red; font-style: italic;">(Do not close this popup!)</strong> 
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 <!-- Modal -->
 <div class="modal fade" id="gradeModalFailed" tabindex="-1" role="dialog" aria-labelledby="gradeModalLabel" aria-hidden="true">
@@ -405,7 +404,22 @@
   <!-- End Google Map -->
 
 </body>
+<style>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: none; /* Hidden by default */
+  z-index: 1040; /* Ensure it's above other elements but below the modal */
+}
 
+.modal.show + .modal-overlay { 
+  display: block; /* Show the overlay when the modal is shown */
+}
+</style>
 
 
 </html>

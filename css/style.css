@@ -1200,3 +1200,12 @@ iframe {
   
   width: 100%;
 }
+
+.modal-open {
+  pointer-events: none; /* Disables all mouse events outside the modal */
+}
+
+.modal, 
+.modal-dialog {
+  pointer-events: auto; /* Enables mouse events within the modal */
+}
