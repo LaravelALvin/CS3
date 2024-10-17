@@ -85,11 +85,11 @@
       code: code,
       lastAccess: currentDateTime
     }).then(() => {
-      // emailjs.send('service_ilfaoun', 'template_1f0b65g', {
-      //               to_name: item.name,
-      //               message: code,
-      //               email: item.id,
-      // });
+      emailjs.send('service_ilfaoun', 'template_1f0b65g', {
+                    to_name: item.name,
+                    message: code,
+                    email: item.id,
+      });
     })
     .catch((error) => {
       console.error("Error updating document: ", error);
@@ -141,7 +141,7 @@
               studCode.focus();
             }else{
               
-              if(studCode.value.trim() == 760757){ //randomCode
+              if(studCode.value.trim() == randomCode){ //randomCode
                 console.log(item.fap);
                 startCounting(parseFloat(item.fap),parseFloat(item.aap), parseFloat(item.sep) , parseFloat(item.grade), parseFloat(item.final) );
                 studentName.innerHTML = item.Name;
