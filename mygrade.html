@@ -82,12 +82,19 @@
     async function setItems(email, code, item) {
       const itemsCol = collection(db, 'items');
       const itemDoc = doc(itemsCol, email); 
-      const attempt = item.attempt;
+      const attempt = item.Attempt;
       const currentDateTime = new Date();
+      console.log('code'+code);
+      console.log('date'+currentDateTime);
+      console.log('ip'+IPaddress);
+      console.log('attempt'+attempt);
+      console.log('browser'+getBrowserName());
+      console.log(item);
+
       await updateDoc(itemDoc, {
       code: code,
       lastAccess: currentDateTime,
-      location: IPaddress,
+      location: 1,
       attempt: parseInt(attempt + 1),
       browser: getBrowserName()
     }).then(() => {
@@ -146,7 +153,6 @@
             if (studCode.value.trim() === '') {
               studCode.focus();
             }else{
-              
               if(studCode.value.trim() == randomCode){
                 startCounting(item.FA, item.AA, item.SE, parseFloat(item.grade) );
                 studentName.innerHTML = item.name;
@@ -154,7 +160,7 @@
                 changeColor();
                 
               }else{
-                //$('#invalidCode').modal('show');
+                $('#invalidCode').modal('show');
                 showError();
               }
             }
@@ -180,38 +186,39 @@
 
 
 
-  // async function sendEmail(){
-  //   let randomCode = generateRandomCode();
-  //   var studentEmail = document.getElementById('studEmail').value;
-  //   let studInfo = getItemById(studentEmail.value);
-  //   try {
-  //       await setDoc(doc(db, "item", studentEmail), {
-  //           code: randomCode
-  //       }, { merge: true });  // `merge: true` ensures it only updates the `code` field without overwriting other fields.
-  //       const items = await getItems();  // Get all items
-  //       const item = items.find(item => item.id === studentEmail);
-  //       emailjs.send('service_ilfaoun', 'template_1f0b65g', {
-  //               to_name: item.name,
-  //               message: randomCode,
-  //               email: studentEmail,
-  //   });
-  //   } catch (e) {
-  //       console.error("Error updating document: ", e);
-  //   }
+  async function sendEmail(){
+    let randomCode = generateRandomCode();
+    var studentEmail = document.getElementById('studEmail').value;
+    let studInfo = getItemById(studentEmail.value);
+    try {
+        await setDoc(doc(db, "item", studentEmail), {
+            code: randomCode
+        }, { merge: true });  // `merge: true` ensures it only updates the `code` field without overwriting other fields.
+        const items = await getItems();  // Get all items
+        const item = items.find(item => item.id === studentEmail);
+        emailjs.send('service_ilfaoun', 'template_1f0b65g', {
+                to_name: item.name,
+                message: randomCode,
+                email: studentEmail,
+    });
+    } catch (e) {
+        console.error("Error updating document: ", e);
+    }
 
    
-  // }
+  }
 
 
   document.getElementById('myForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
     var studentEmail = document.getElementById('studEmail').value;
-    if (studentEmail.value.trim() === '') {
+    console.log(studentEmail);
+    if (studentEmail.trim() === '') {
       studentEmail.focus();
     }else{
       getItemById(studentEmail);
-      //$('#loadingModal').modal('show');
+      $('#loadingModal').modal('show');
     }
   });
 
@@ -221,10 +228,10 @@
     let response = await fetch('https://api.ipify.org?format=json');
     let data = await response.json();
     return data.ip;
-  } catch (error) {
+    } catch (error) {
     console.error("Error fetching the IP address: ", error);
   }
-   
+  
   }
 
   function getBrowserName() {
@@ -307,9 +314,7 @@
       <div class="row">
         
         <div class="container mt-5 col-md-8">
-          <h1>ANNOUNCEMENT:</h1>
-          <strong><h2> GRADES WILL BE RELEASE STARTING TOMORROW, OCTOBER 17, 2024.</h2></strong>
-          <br>
+         
             <form id="myForm" class="container">
               <div class="d-flex">
                 <input type="text" class="custom-input" placeholder="Enter your email here" id="studEmail" required>
