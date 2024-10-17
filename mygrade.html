@@ -142,8 +142,8 @@
             }else{
               
               if(studCode.value.trim() == randomCode){ //randomCode
-                console.log(item.fap);
-                startCounting(parseFloat(item.fap),parseFloat(item.aap), parseFloat(item.sep) , parseFloat(item.grade), parseFloat(item.final) );
+                console.log(item);
+                startCounting(parseFloat(item.fap), parseFloat(item.aap), parseFloat(item.sep) , parseFloat(item.grade), parseFloat(item.final) );
                 studentName.innerHTML = item.Name;
                 popupModal();
                 changeColor();
