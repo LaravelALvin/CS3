@@ -114,10 +114,10 @@
       const item = items.find(item => item.id === itemId);
       if (item) {
          let timeDif = getTimeDifference(item.lastAccess);
-         console.log(timeDif);
+         //console.log(timeDif);
         if (timeDif <= 5) {
             let remainingSeconds = 5 - timeDif;
-            console.log(`Wait ${remainingSeconds.toFixed(2)} more seconds.`);
+            //console.log(`Wait ${remainingSeconds.toFixed(2)} more seconds.`);
             countdownInterval = setInterval(() => {
             if (remainingSeconds > 0) {
                 generateCode.disabled = true;
@@ -142,7 +142,7 @@
             }else{
               
               if(studCode.value.trim() == randomCode){ //randomCode
-                console.log(item);
+               // console.log(item);
                 startCounting(parseFloat(item.fap), parseFloat(item.aap), parseFloat(item.sep) , parseFloat(item.grade), parseFloat(item.final) );
                 studentName.innerHTML = item.Name;
                 popupModal();
