@@ -116,7 +116,7 @@
          let timeDif = getTimeDifference(item.lastAccess);
          //console.log(timeDif);
         if (timeDif <= 5) {
-            let remainingSeconds = 5 - timeDif;
+            let remainingSeconds = 120 - timeDif;
             //console.log(`Wait ${remainingSeconds.toFixed(2)} more seconds.`);
             countdownInterval = setInterval(() => {
             if (remainingSeconds > 0) {
