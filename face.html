@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face and Hand Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@1.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@0.0.5"></script>
+    <style>
+        canvas {
+            display: block;
+            margin: auto;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas></canvas>
+    <script>
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.playsInline = true;
+
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+
+        async function setupCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            await new Promise((resolve) => {
+                video.onloadedmetadata = () => resolve();
+            });
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+        }
+
+        async function detectFaceAndHand() {
+            // Ensure libraries are loaded
+            console.log("Face Landmarks Detection:", typeof faceLandmarksDetection !== "undefined");
+            console.log("Hand Pose Detection:", typeof handPoseDetection !== "undefined");
+
+            // Load models
+            const faceModel = await faceLandmarksDetection.load(
+                faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
+            );
+            const handModel = await handPoseDetection.createDetector(
+                handPoseDetection.SupportedModels.MediaPipeHands
+            );
+
+            async function detect() {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Detect faces
+                const faces = await faceModel.estimateFaces({ input: video });
+                faces.forEach((face) => {
+                    ctx.beginPath();
+                    ctx.rect(
+                        face.boundingBox.topLeft[0],
+                        face.boundingBox.topLeft[1],
+                        face.boundingBox.bottomRight[0] - face.boundingBox.topLeft[0],
+                        face.boundingBox.bottomRight[1] - face.boundingBox.topLeft[1]
+                    );
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+
+                // Detect hands
+                const hands = await handModel.estimateHands(video);
+                hands.forEach((hand) => {
+                    hand.keypoints.forEach((keypoint) => {
+                        ctx.beginPath();
+                        ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+                        ctx.fillStyle = 'blue';
+                        ctx.fill();
+                    });
+                });
+
+                requestAnimationFrame(detect);
+            }
+
+            detect();
+        }
+
+        (async function main() {
+            await setupCamera();
+            await detectFaceAndHand();
+        })();
+    </script>
+</body>
+</html>

@@ -58,6 +58,12 @@ body {
   text-transform: uppercase;
 }
 
+header{
+  top: 0;
+  position: sticky;
+  z-index: 9999;
+}
+
 /*header section*/
 .hero_area {
   min-height: 100vh;
@@ -131,6 +137,7 @@ a:focus {
 .custom_nav-container {
   z-index: 99999;
   padding: 5px 0;
+  
 }
 
 .custom_nav-container .navbar-toggler {
@@ -900,6 +907,8 @@ a:focus {
 }
 
 
+
+
 .score-table th, .score-table td {
   padding: 15px;
   text-align: left;
@@ -1219,3 +1228,4 @@ iframe {
 .modal-dialog {
   pointer-events: auto; /* Enables mouse events within the modal */
 }
+
