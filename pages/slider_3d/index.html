@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            background-color: #aaa3a3;
+            background-image:
+            repeating-linear-gradient(
+                to right, transparent 0 100px,
+                #25283b22 100px 101px
+            ),
+            repeating-linear-gradient(
+                to bottom, transparent 0 100px,
+                #25283b22 100px 101px
+            );
+        }
+        
+        body::before{
+            position: absolute;
+            width: min(1400px, 90vw);
+            top: 10%;
+            left: 50%;
+            height: 90%;
+            transform: translateX(-50%);
+            content: '';
+            background-image: url(images/bg.png);
+            background-size: 100%;
+            background-repeat: no-repeat;
+            background-position: top center;
+            pointer-events: none;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+
+    <div class="banner">
+        <a href="#" class="lightbox" id="borrel">
+            <span style="background-image: url('images/tba.jpeg')"></span>
+        </a>
+        <div class="slider" style="--quantity: 10">
+            <div class="item" style="--position: 1"> <a href="#borrel"><div class="card card1"></div></a></div>
+            <div class="item" style="--position: 2"> <a href="#borrel"><div class="card card2"></div></a></div>
+            <div class="item" style="--position: 3"> <a href="#borrel"><div class="card card3"></div></a></div>
+            <div class="item" style="--position: 4"> <a href="#borrel"><div class="card card4"></div></a></div>
+            <div class="item" style="--position: 5"> <a href="#borrel"><div class="card card5"></div></a></div>
+            <div class="item" style="--position: 6"> <a href="#borrel"><div class="card card6"></div></a></div>
+            <div class="item" style="--position: 7"> <a href="#borrel"><div class="card card7"></div></a></div>
+            <div class="item" style="--position: 8"> <a href="#borrel"><div class="card card8"></div></a></div>
+            <div class="item" style="--position: 9"> <a href="#borrel"><div class="card card9"></div></a></div>
+            <div class="item" style="--position: 10"> <a href="#borrel"><div class="card card9"></div></a></div>
+        </div>
+        <div class="content">
+            <h1 data-content="TOP">
+                TOP
+            </h1>
+            <div class="author">
+                <h2> DEV</h2>
+                <p><b>TEST</b></p>
+                <p>
+                    
+                </p>
+            </div>
+            <div class="model"></div>
+        </div>
+    </div>
+    
+</body>
+</html>

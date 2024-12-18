@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Watchlist Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #141414;
+            color: #fff;
+        }
+
+        /* Title Section */
+        .title {
+            background-color: #e50914;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 30%;
+            font-size: 30px;
+        }
+
+        /* Section Styling */
+        .section {
+            margin: 20px auto;
+            width: 90%;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .card-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: #333;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.06);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-color: transparent;
+        }
+
+        /* Priority Borders */
+        .high-priority {
+            border-color: red;
+        }
+
+        .medium-priority {
+            border-color: yellow;
+        }
+
+        .low-priority {
+            border-color: blue;
+        }
+        .hover-card {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            background-size: cover;
+        }
+
+        .hover-card:hover {
+            transform: scale(1.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        .movie1:hover{
+            background-image: url("https://resizing.flixster.com/0xxuABVVuzJrUT130WFHKE-irEg=/ems.cHJkLWVtcy1hc3NldHMvdHZzZWFzb24vNzUyMTFhOTktZTU4Ni00ODkyLWJlYjQtZTgxYTllZmU2OGM0LmpwZw==");
+       
+        }
+        .movie2:hover{
+            background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQOLWfh8sArRVNC6CG7qXyXgMnjl0Z44GlCzxrF4ABkYQbeLOoVhn2t10fBG0onYDKJUoZ");
+          
+        }
+        .movie3:hover{
+            background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtQyTSGoBOHXR_A6CHP60yJ00Ln_SVtgu5QFCM5fnbvTx34pq1_JSzt6gQjoCM6DfKUqbEb8PSDOAewHMqoRplYipQ7A556J2n23vGwg");
+          
+        }
+        .movie4:hover{
+            background-image: url("https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQrpQa4kPsu6vyXAGfOOHSuscIGwdQuxyOs0Lp-EndlqkhFdcxNPg0kt-lws9e49GAqx2wxRg");
+       
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Title Section -->
+    <div class="title">
+        Netflix and Chill Watchlist Tracker 2024
+    </div>
+
+    <!-- Currently Watching Section -->
+    <div class="section">
+        <div class="section-title">Currently Watching</div>
+        <div class="card-container">
+            <div class="card hover-card movie1" >
+                <h3>Title: Stranger Things</h3>
+                <p>Genre: Sci-Fi</p>
+            </div>
+            <div class="card hover-card movie2">
+                <h3>Title: Breaking Bad</h3>
+                <p>Genre: Crime</p>
+            </div>
+            <div class="card hover-card movie3">
+                <h3>Title: The Crown</h3>
+                <p>Genre: Drama</p>
+            </div>
+            <div class="card hover-card movie4">
+                <h3>Title: The Witcher</h3>
+                <p>Genre: Fantasy</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Most Watched Section -->
+    <div class="section">
+        <div class="section-title">Most Watched</div>
+        <div class="card-container">
+            <div class="card high-priority hover-card">
+                <h3>Rank: 1</h3>
+                <p>Title: Money Heist</p>
+                <p>Priority: High</p>
+            </div>
+            <div class="card medium-priority hover-card">
+                <h3>Rank: 2</h3>
+                <p>Title: Squid Game</p>
+                <p>Priority: Medium</p>
+            </div>
+            <div class="card low-priority hover-card">
+                <h3>Rank: 3</h3>
+                <p>Title: Bridgerton</p>
+                <p>Priority: Low</p>
+            </div>
+            <div class="card low-priority hover-card">
+                <h3>Rank: 4</h3>
+                <p>Title: Ozark</p>
+                <p>Priority: Medium</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
