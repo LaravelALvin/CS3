@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Summary</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      background-color: #000;
+      color: #fff;
+    }
+
+    .story-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .story {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      width: 100%;
+      animation: fadeIn 1s;
+    }
+
+    .story.active {
+      display: flex;
+    }
+
+    .story img {
+      max-width: 80%;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-bar {
+      position: absolute;
+      top: 10px;
+      width: 80%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-bar div {
+      flex: 1;
+      height: 100%;
+      margin-right: 5px;
+      background: linear-gradient(to left, lightblue 50%,#1db954  50%) right;
+      background-size: 200%;
+      position: relative;
+      transition: background 0.3s ease;
+      
+    }
+
+    .progress-bar div.active {
+        transition: 2s ease-out;
+        background-position: left;
+    }
+
+    .progress-bar div.complete {
+      background: #1db954;
+      background-position: left;
+    }
+
+    .progress-bar div span {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: #fff;
+    }
+
+    .progress-bar div:last-child {
+      margin-right: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    button {
+      position: absolute;
+      bottom: 20px;
+      background: #1db954;
+      border: none;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      display: none;
+    }
+
+    button:hover {
+      background: #1aa34a;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="story-container">
+    <div class="progress-bar">
+      <div><span>0%</span></div>
+      <div><span>0%</span></div>
+      <div><span>0%</span></div>
+      <div><span>0%</span></div>
+    </div>
+    <div class="story active">
+      <img src="https://via.placeholder.com/300" alt="Formative Assessments">
+      <h1>Formative Assessments</h1>
+      <p>Completed with great effort!</p>
+    </div>
+    <div class="story">
+      <img src="https://via.placeholder.com/300" alt="Alternative Assessments">
+      <h1>Alternative Assessments</h1>
+      <p>Innovative and creative!</p>
+    </div>
+    <div class="story">
+      <img src="https://via.placeholder.com/300" alt="2nd Quarter Exam">
+      <h1>2nd Quarter Exam</h1>
+      <p>Your performance shines through!</p>
+    </div>
+    <div class="story">
+      <img src="https://via.placeholder.com/300" alt="2nd Quarter Grade">
+      <h1>2nd Quarter Grade</h1>
+      <p>Congratulations on your hard work!</p>
+    </div>
+  </div>
+
+  <script>
+    const stories = document.querySelectorAll('.story');
+    const progressBars = document.querySelectorAll('.progress-bar div');
+    let currentStory = 0;
+
+    function showNextStory() {
+      if (currentStory < stories.length) {
+        if (currentStory > 0) {
+          progressBars[currentStory - 1].classList.remove('active');
+          progressBars[currentStory - 1].classList.add('complete');
+          progressBars[currentStory - 1].style.width = '100%';
+        }
+        stories[currentStory].classList.remove('active');
+        currentStory++;
+        if (currentStory < stories.length) {
+          stories[currentStory].classList.add('active');
+        } else if (currentStory === stories.length) {
+          progressBars[currentStory - 1].classList.add('complete');
+          progressBars[currentStory - 1].style.width = '100%';
+        }
+      }
+    }
+
+    function autoPlayStories() {
+      if (currentStory < stories.length) {
+        const progress = progressBars[currentStory];
+        progress.classList.add('active');
+        let percent = 0;
+        const interval = setInterval(() => {
+          percent += 1;
+          progress.style.width = `${percent}%`;
+          progress.querySelector('span').innerText = `${percent}%`;
+          if (percent >= 100) {
+            clearInterval(interval);
+            showNextStory();
+            autoPlayStories();
+          }
+        }, 30);
+      }
+    }
+
+    autoPlayStories();
+  </script>
+</body>
+</html>

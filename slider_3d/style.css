@@ -133,34 +133,27 @@
 
 
 .lightbox {
-    /* Default to hidden */
     display: none;
-    /* Overlay entire screen */
     position: fixed;
     z-index: 99999999;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    /* A bit of padding around image */
     padding: 1em;
-    /* Translucent background */
     background: rgba(0, 0, 0, 0.8);
     transition: 5s;
   }
   
-  /* Unhide the lightbox when it's the target */
   .lightbox:target {
     display: block;
     transition: 5s;
   }
   
   .lightbox span {
-    /* Full width and height */
     display: block;
     width: 100%;
     height: 100%;
-    /* Size and position background image */
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -187,7 +180,7 @@
     animation:  1s ease infinite;
     transform-origin: center;
     z-index: 10;
-    transform: translate3d(0, 0, -1px) scale(.6);
+    transform: translate3d(0, 0, -1px);
     
   }
   
@@ -200,61 +193,61 @@
   .card.card1 {
     --color1: #eb8bff;
     --color2: #7eeefa;
-    background-image: url(images/card1.png);
+    background-image: url(images/1.png);
   }
   
   .card.card2 {
     --color1: lightgreen;
     --color2: #7eeefa;
-    background-image: url(images/card2.png);
+    background-image: url(images/2.png);
   }
   
   .card.card3 {
     --color1: #eb8bff;
     --color2: #7eeefa;
-    background-image: url(images/card3.png);
+    background-image: url(images/3.png);
   }
   
   .card.card4 {
     --color1: lightgreen;
     --color2: green;
-    background-image: url(images/card4.png);
+    background-image: url(images/4.png);
   }
 
   .card.card5 {
     --color1: #ffdf35;
     --color2: #65f0ff;
-    background-image: url(images/card6.png);
+    background-image: url(images/6.png);
   }
 
   .card.card6 {
     --color1: #eb8bff;
     --color2: #7eeefa;
-    background-image: url(images/card6.png);
+    background-image: url(images/6.png);
   }
   
   .card.card7 {
     --color1: lightgreen;
     --color2: #7eeefa;
-    background-image: url(images/card7.png);
+    background-image: url(images/7.png);
   }
   
   .card.card8 {
     --color1: #eb8bff;
     --color2: #7eeefa;
-    background-image: url(images/card8.png);
+    background-image: url(images/8.png);
   }
   
   .card.card9 {
     --color1: lightgreen;
     --color2: green;
-    background-image: url(images/card9.png);
+    background-image: url(images/9.png);
   }
 
   .card.card10 {
     --color1: #ffdf35;
     --color2: #65f0ff;
-    background-image: url(images/card0.png);
+    background-image: url(images/0.png);
   }
   
   .card > span {
@@ -277,7 +270,7 @@
   
   .card:before {
     background-position: 50% 50%;
-    background-size: 300% 300%;
+    background-size: 100% 100%;
     -webkit-animation: holoGradient 15s ease infinite both;
     animation: holoGradient 15s ease infinite both;
     background-image: linear-gradient(115deg, transparent 0%, var(--color1) 30%, transparent 47.5%, transparent 52.5%, var(--color2) 70%, transparent 100%);
@@ -287,7 +280,7 @@
     opacity: 1;
     background-image: url("https://assets.codepen.io/13471/sparkles.gif");
     background-position: center;
-    background-size: 160%;
+    background-size: 100%;
     z-index: 2;
     -webkit-animation: holoSparkle 15s ease infinite both;
     animation: holoSparkle 15s ease infinite both;
