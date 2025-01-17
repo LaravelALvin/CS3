@@ -37,6 +37,16 @@
         src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
   </script>
   <script type="text/javascript">
+
+        // URL or file to check
+    const targetFile = "mygrade.html"; // Replace with the specific file or partial URL to monitor
+    const maintenancePage = "/maintenance.html"; // Replace with the actual maintenance page URL
+
+    // Redirect logic
+    if (window.location.pathname.includes(targetFile)) {
+      window.location.href = maintenancePage;
+    }
+
     (function(){
         emailjs.init({
           publicKey: "x80W0qhFuxrQZ8iu1",
