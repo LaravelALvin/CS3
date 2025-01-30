@@ -9,9 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <!-- Site Metas -->
   <link rel="icon" href="images/icon2.png" type="image/gif" />
-  <meta name="keywords" content="" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
+
 
   <title>CS3 - My Grade</title>
 
@@ -38,14 +36,14 @@
   </script>
   <script type="text/javascript">
 
-        // URL or file to check
-    const targetFile = "mygrade.html"; // Replace with the specific file or partial URL to monitor
-    const maintenancePage = "/maintenance.html"; // Replace with the actual maintenance page URL
+    //     // URL or file to check
+    // const targetFile = "mygrade.html"; // Replace with the specific file or partial URL to monitor
+    // const maintenancePage = "/maintenance.html"; // Replace with the actual maintenance page URL
 
-    // Redirect logic
-    if (window.location.pathname.includes(targetFile)) {
-      window.location.href = maintenancePage;
-    }
+    // // Redirect logic
+    // if (window.location.pathname.includes(targetFile)) {
+    //   window.location.href = maintenancePage;
+    // }
 
     (function(){
         emailjs.init({
@@ -53,13 +51,27 @@
         });
     })();
   </script>
+
   <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="encryption.js" defer></script>
   
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, collection, updateDoc, doc, getDocs} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getFirestore, collection, updateDoc, doc, getDoc} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    const SECRET_KEY = "cs3-grade-9-2025";
+
+    function encryptValue(input) {
+      return CryptoJS.AES.encrypt(input, SECRET_KEY).toString();
+    }
+
+    function verifyEncryptedValue(encryptedValue, newInput) {
+      const decryptedBytes = CryptoJS.AES.decrypt(encryptedValue, SECRET_KEY);
+      const decryptedValue = decryptedBytes.toString(CryptoJS.enc.Utf8);
+      return decryptedValue === newInput;
+    }
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
@@ -78,17 +90,30 @@
     const db = getFirestore(app);
 
     // Get a list of items from your "items" collection
-    async function getItems() {
+    async function getItems(email) {
+      //$('#loadingModal').modal('show');
+      const itemRef = doc(db, 'items', email);
+      //const itemSnapshot = await getDocs(itemsCol);
+      //const itemList = itemSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // const itemId = email; // Replace with the actual item ID
+      // const itemRef = collection(db, 'items');
+      // console.log(item);
+      //$('#loadingModal').modal('hide');
+      return itemRef;
+    }
+
+    async function getCode(email) {
       $('#loadingModal').modal('show');
-      const itemsCol = collection(db, 'items');
-      const itemSnapshot = await getDocs(itemsCol);
-      const itemList = itemSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const itemRef = doc(db, 'code', email);
+      // const itemSnapshot = await getDoc(itemRef);
+      // const item = { id: itemSnapshot.id, ...itemSnapshot.data() };
+      //console.log(item);
       $('#loadingModal').modal('hide');
-      return itemList;
+      return itemRef;
     }
 
     async function setItems(email, code, item) {
-      const itemsCol = collection(db, 'items');
+      const itemsCol = collection(db, 'code');
       const itemDoc = doc(itemsCol, email); 
       const currentDateTime = new Date();
       await updateDoc(itemDoc, {
@@ -96,9 +121,9 @@
       lastAccess: currentDateTime
     }).then(() => {
       emailjs.send('service_ilfaoun', 'template_1f0b65g', {
-                    to_name: item.Name,
-                    message: code,
-                    email: item.id,
+                    // to_name: item.Name,
+                    // message: code,
+                    // email: item.id,
       });
     })
     .catch((error) => {
@@ -120,10 +145,14 @@
     async function getItemById(itemId) {
       if (countdownInterval) clearInterval(countdownInterval);
       let randomCode = Math.floor(100000 + Math.random() * 900000);
-      const items = await getItems();
-      const item = items.find(item => item.id === itemId);
-      if (item) {
-         let timeDif = getTimeDifference(item.lastAccess);
+      console.log(randomCode);
+      randomCode = encryptValue(randomCode.toString());
+      console.log(randomCode);
+      const itemsCode = await getCode(itemId);
+      const itemSnapshotCode = await getDoc(itemsCode);
+      const itemCode = { id: itemSnapshotCode.id, ...itemSnapshotCode.data() };
+      if (itemCode) {
+         let timeDif = getTimeDifference(itemCode.lastAccess);
          //console.log(timeDif);
         if (timeDif <= 5) {
             let remainingSeconds = 120 - timeDif;
@@ -142,7 +171,7 @@
         }, 1000);
         } else {
             
-        setItems(itemId, randomCode, item);
+        setItems(itemId, randomCode, itemCode);
         $('#gradeModal').modal('show');
           document.getElementById("generateGradeform").addEventListener("submit", function() {
             event.preventDefault();
@@ -151,10 +180,18 @@
               studCode.focus();
             }else{
               
-              if(studCode.value.trim() == randomCode){ //randomCode
-               // console.log(item);
-                startCounting(parseFloat(item.fap), parseFloat(item.aap), parseFloat(item.sep) , parseFloat(item.grade), parseFloat(item.final) );
-                studentName.innerHTML = item.Name;
+              const isMatch = verifyEncryptedValue(randomCode, studCode.value);
+
+              if(isMatch){ 
+                async function getStudentGrade() {
+                  const items =  await getItems(itemId);
+                  const itemSnapshot = await getDoc(items);
+                  const item = { id: itemSnapshot.id, ...itemSnapshot.data() };
+                  startCounting(parseFloat(item.fap), parseFloat(item.aap), parseFloat(item.sep) , parseFloat(item.grade), parseFloat(item.final) );
+                  studentName.innerHTML = item.Name;
+                }
+                
+                getStudentGrade();
                 popupModal();
                 changeColor();
                 
@@ -172,7 +209,7 @@
       }
     }
 
-    function showError(inputElement) {
+    function showError() {
       studentCode.classList.add('error', 'shake');
       studentCode.setCustomValidity('Invalid code');
       studentCode.reportValidity();
