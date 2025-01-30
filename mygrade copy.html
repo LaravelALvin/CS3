@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <link rel="icon" href="images/icon2.png" type="image/gif" />
+
+
+  <title>CS3 - My Grade</title>
+
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+
+  <!-- fonts style -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+
+  <!-- font awesome style -->
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <!-- Custom styles for this template -->
+  <link href="css/style.css" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="css/responsive.css" rel="stylesheet" />
+
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.0/dist/confetti.browser.min.js"></script>
+
+  <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+  </script>
+  <script type="text/javascript">
+
+    //     // URL or file to check
+    // const targetFile = "mygrade.html"; // Replace with the specific file or partial URL to monitor
+    // const maintenancePage = "/maintenance.html"; // Replace with the actual maintenance page URL
+
+    // // Redirect logic
+    // if (window.location.pathname.includes(targetFile)) {
+    //   window.location.href = maintenancePage;
+    // }
+
+    (function(){
+        emailjs.init({
+          publicKey: "x80W0qhFuxrQZ8iu1",
+        });
+    })();
+  </script>
+
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="encryption.js" defer></script>
+  
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, collection, updateDoc, doc, getDoc} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    const SECRET_KEY = "cs3-grade-9-2025";
+
+    function encryptValue(input) {
+      return CryptoJS.AES.encrypt(input, SECRET_KEY).toString();
+    }
+
+    function verifyEncryptedValue(encryptedValue, newInput) {
+      const decryptedBytes = CryptoJS.AES.decrypt(encryptedValue, SECRET_KEY);
+      const decryptedValue = decryptedBytes.toString(CryptoJS.enc.Utf8);
+      return decryptedValue === newInput;
+    }
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+    apiKey: "AIzaSyDN93MTDjXqCFiQvB_9bN0HO3VmofG3SyA",
+    authDomain: "expense-tracker-605fb.firebaseapp.com",
+    projectId: "expense-tracker-605fb",
+    storageBucket: "expense-tracker-605fb.appspot.com",
+    messagingSenderId: "846933995170",
+    appId: "1:846933995170:web:ff132d86c703783eacf1fb"
+  };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize Firestore
+    const db = getFirestore(app);
+
+    // Get a list of items from your "items" collection
+    async function getItems(email) {
+      //$('#loadingModal').modal('show');
+      const itemRef = doc(db, 'items', email);
+      //const itemSnapshot = await getDocs(itemsCol);
+      //const itemList = itemSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // const itemId = email; // Replace with the actual item ID
+      // const itemRef = collection(db, 'items');
+      // console.log(item);
+      //$('#loadingModal').modal('hide');
+      return itemRef;
+    }
+
+    async function getCode(email) {
+      $('#loadingModal').modal('show');
+      const itemRef = doc(db, 'code', email);
+      // const itemSnapshot = await getDoc(itemRef);
+      // const item = { id: itemSnapshot.id, ...itemSnapshot.data() };
+      //console.log(item);
+      $('#loadingModal').modal('hide');
+      return itemRef;
+    }
+
+    async function setItems(email, code, item) {
+      const itemsCol = collection(db, 'code');
+      const itemDoc = doc(itemsCol, email); 
+      const currentDateTime = new Date();
+      await updateDoc(itemDoc, {
+      code: code,
+      lastAccess: currentDateTime
+    }).then(() => {
+      emailjs.send('service_ilfaoun', 'template_1f0b65g', {
+                    // to_name: item.Name,
+                    // message: code,
+                    // email: item.id,
+      });
+    })
+    .catch((error) => {
+      console.error("Error updating document: ", error);
+    });
+      
+  }
+
+  function getTimeDifference(datetime){
+    // Convert Firestore Timestamp to milliseconds
+    let firestoreMillis = (datetime.seconds * 1000) + (datetime.nanoseconds / 1e6); 
+    let currentMillis = Date.now();
+    let differenceMillis = currentMillis - firestoreMillis;
+    let differenceSeconds = differenceMillis / 1000;
+    return differenceSeconds;
+  }
+  let countdownInterval;
+
+    async function getItemById(itemId) {
+      if (countdownInterval) clearInterval(countdownInterval);
+      let randomCode = Math.floor(100000 + Math.random() * 900000);
+      console.log(randomCode);
+      randomCode = encryptValue(randomCode.toString());
+      console.log(randomCode);
+      const itemsCode = await getCode(itemId);
+      const itemSnapshotCode = await getDoc(itemsCode);
+      const itemCode = { id: itemSnapshotCode.id, ...itemSnapshotCode.data() };
+      if (itemCode) {
+         let timeDif = getTimeDifference(itemCode.lastAccess);
+         //console.log(timeDif);
+        if (timeDif <= 5) {
+            let remainingSeconds = 120 - timeDif;
+            //console.log(`Wait ${remainingSeconds.toFixed(2)} more seconds.`);
+            countdownInterval = setInterval(() => {
+            if (remainingSeconds > 0) {
+                generateCode.disabled = true;
+                generateCode.textContent = "try again after " + Math.ceil(remainingSeconds) + " seconds"; // Update button text
+                remainingSeconds--;
+            } else {
+                // Time's up, enable the button
+                generateCode.textContent = "Get Code";
+                generateCode.disabled = false;
+                clearInterval(countdownInterval); // Stop the countdown
+            }
+        }, 1000);
+        } else {
+            
+        setItems(itemId, randomCode, itemCode);
+        $('#gradeModal').modal('show');
+          document.getElementById("generateGradeform").addEventListener("submit", function() {
+            event.preventDefault();
+            var studCode = document.getElementById('studentCode');
+            if (studCode.value.trim() === '') {
+              studCode.focus();
+            }else{
+              
+              const isMatch = verifyEncryptedValue(randomCode, studCode.value);
+
+              if(isMatch){ 
+                async function getStudentGrade() {
+                  const items =  await getItems(itemId);
+                  const itemSnapshot = await getDoc(items);
+                  const item = { id: itemSnapshot.id, ...itemSnapshot.data() };
+                  startCounting(parseFloat(item.fap), parseFloat(item.aap), parseFloat(item.sep) , parseFloat(item.grade), parseFloat(item.final) );
+                  studentName.innerHTML = item.Name;
+                }
+                
+                getStudentGrade();
+                popupModal();
+                changeColor();
+                
+              }else{
+                //$('#invalidCode').modal('show');
+                showError();
+              }
+            }
+          });
+        }
+
+      } else {
+        $('#gradeModalFailed').modal('show');
+          return 'item Not Found!';
+      }
+    }
+
+    function showError() {
+      studentCode.classList.add('error', 'shake');
+      studentCode.setCustomValidity('Invalid code');
+      studentCode.reportValidity();
+
+      studentCode.addEventListener('animationend', function() {
+      studentCode.classList.remove('shake');
+      studentCode.setCustomValidity('');
+    }, { once: true });
+  }
+
+
+
+  // async function sendEmail(){
+  //   let randomCode = generateRandomCode();
+  //   var studentEmail = document.getElementById('studEmail').value;
+  //   let studInfo = getItemById(studentEmail.value);
+  //   try {
+  //       await setDoc(doc(db, "item", studentEmail), {
+  //           code: randomCode
+  //       }, { merge: true });  // `merge: true` ensures it only updates the `code` field without overwriting other fields.
+  //       const items = await getItems();  // Get all items
+  //       const item = items.find(item => item.id === studentEmail);
+  //       emailjs.send('service_ilfaoun', 'template_1f0b65g', {
+  //               to_name: item.name,
+  //               message: randomCode,
+  //               email: studentEmail,
+  //   });
+  //   } catch (e) {
+  //       console.error("Error updating document: ", e);
+  //   }
+
+   
+  // }
+
+
+  document.getElementById('myForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var studentEmail = document.getElementById('studEmail');
+    if (studentEmail.value.trim() === '') {
+      studentEmail.focus();
+    }else{
+      getItemById(studentEmail.value);
+      //$('#loadingModal').modal('show');
+    }
+  });
+  </script>
+
+</head>
+
+<body class="sub_page">
+
+  <div class="hero_area">
+    <!-- header section strats -->
+    <header class="header_section long_section px-0">
+      <nav class="navbar navbar-expand-lg custom_nav-container ">
+        <a class="navbar-brand" href="index.html">
+          <span>
+            Computer Science 3
+          </span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class=""> </span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="d-flex-row-reverse mx-auto flex-column flex-lg-row ">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="first.html">First Quarter</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="second.html"> Second Quarter</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="third.html">Third Quarter</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="fourth.html">Fourth Quarter</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="tutorials.html">Tutorials</a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link" href="mygrade.html">My Grade</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- end header section -->
+  </div>
+
+   <!-- about section -->
+
+   <section class="about_section layout_padding long_section">
+    <div class="container">
+      <div class="row">
+        <div class="container mt-5 col-md-20">
+            <form id="myForm" class="container">
+              <div class="d-flex">
+                <input type="text" class="custom-input" placeholder="Enter your email here" id="studEmail" required>
+                <button id="generateCode" class="custom-button" type="submit">Get Code</button>
+              </div>
+            </form>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="score-table mt-5 col-md-10">
+          <table class="table">
+            <thead>
+              <th id="studentName"></th>
+              <th></th>
+            </thead>
+            <tbody>
+              <tr id="formative">
+                <td>Formative Assessments</td>
+                <td><span id="formative-score">0</span>/25.00%</td>
+              </tr>
+              <tr id="alternative">
+                <td>Alternative Assessments</td>
+                <td><span id="alternative-score">0</span>/40.00%</td>
+              </tr>
+              <tr id="quarter">
+                <td>Quarter Exam</td>
+                <td><span id="longtest-score">0</span>/35.00%</td>
+              </tr>
+              <tr id="gradefinal">
+                <td class="grade-display">Final Grade</td>
+                <td class="grade-display"><span id="grade-display">0</span>% | <span id="stanine">0</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="percentage mt-3">
+          <table>
+            <thead>
+              <tr>
+                <th style="margin-left: -5px;">Percentage</th>   
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0.00%</td>
+                <td>5.00</td>
+              </tr>
+              <tr>
+                <td>40.00%</td>
+                <td>4.00</td>
+              </tr>
+              <tr>
+                <td>50.00%</td>
+                <td>3.00</td>
+              </tr>
+              <tr>
+                <td>55.00%</td>
+                <td>2.75</td>
+              </tr>
+              <tr>
+                <td>60.00%</td>
+                <td>2.50</td>
+              </tr>
+              <tr>
+                <td>66.00%</td>
+                <td>2.25</td>
+              </tr>
+              <tr>
+                <td>72.00%</td>
+                <td>2.00</td>
+              </tr>
+              <tr>
+                <td>78.00%</td>
+                <td>1.75</td>
+              </tr>
+              <tr>
+                <td>84.00%</td>
+                <td>1.50</td>
+              </tr>
+              <tr>
+                <td>90.00%</td>
+                <td>1.25</td>
+              </tr>
+              <tr>
+                <td>96.00%</td>
+                <td>1.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="percentage">
+          
+        </div>
+      
+      </div>
+      
+      
+  </section>
+
+  
+  
+
+<!-- Modal -->  
+  <div class="modal fade" id="gradeModal" tabindex="-1" aria-labelledby="gradeModalLabel" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog"> 
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="container"> 
+            <img src="images/chekc.png" width="10%" alt="Check Mark">
+            <h5 class="modal-title" id="gradeModalLabel">Verification</h5>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <p>Enter the code sent to your email</p>
+            <form id="generateGradeform" class="container">
+              <div class="d-flex mt-4">
+                <input type="text" class="custom-input" placeholder="Enter the code here" id="studentCode" required>
+                <button id="generateGrade" class="custom-button" type="submit">Get Grade</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <strong style="color: red; font-style: italic;">(Do not close this popup!)</strong> 
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Modal -->
+<div class="modal fade" id="gradeModalFailed" tabindex="-1" role="dialog" aria-labelledby="gradeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="container">
+          <img src="images/error.png" width="10%" alt="X Mark">
+          <h5 class="modal-title" id="gradeModalLabel">Error!</h5>
+      </div>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <p>The email you entered is not found in the database.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="loadingModal" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="container">
+          <center>
+            <div class="loader"></div>
+            <p> Please wait</p>
+          </center>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- end about section -->
+
+  <!-- <div class="iframe-container">
+    <iframe src="https://get-grades.vercel.app/" allowfullscreen height="100%"></iframe>
+  </div> -->
+
+ <!-- footer section -->
+  <footer class="footer_section">
+    <div class="container">
+      <p>
+        &copy; <span id="displayYear"></span> All Rights Reserved | 
+        <a href="https://alvinf.vercel.app/">ACF</a>
+      </p>
+    </div>
+  </footer>
+  <!-- footer section -->
+
+
+  <!-- jQery -->
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <!-- bootstrap js -->
+  <script src="js/bootstrap.js"></script>
+  <!-- custom js -->
+  <script src="js/custom.js"></script>
+  <!-- Google Map -->
+  <script src="js/confetti.js"></script>
+  <!-- End Google Map -->
+
+</body>
+<style>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: none; /* Hidden by default */
+  z-index: 1040; /* Ensure it's above other elements but below the modal */
+}
+
+.modal.show + .modal-overlay { 
+  display: block; /* Show the overlay when the modal is shown */
+}
+</style>
+
+
+</html>
