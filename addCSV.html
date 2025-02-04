@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to Firestore</title>
+</head>
+<body>
+    <h2>Upload CSV to Firestore</h2>
+    <input type="file" id="csvFileInput" accept=".csv">
+    <button onclick="uploadCSV()">Upload</button>
+
+    <script type="module">
+        // Firebase Configuration
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+    apiKey: "AIzaSyDN93MTDjXqCFiQvB_9bN0HO3VmofG3SyA",
+    authDomain: "expense-tracker-605fb.firebaseapp.com",
+    projectId: "expense-tracker-605fb",
+    storageBucket: "expense-tracker-605fb.appspot.com",
+    messagingSenderId: "846933995170",
+    appId: "1:846933995170:web:ff132d86c703783eacf1fb"
+  };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to handle file upload
+        window.uploadCSV = function () {
+            const fileInput = document.getElementById("csvFileInput");
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select a CSV file first.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function (event) {
+                const text = event.target.result;
+                const rows = text.split("\n");
+
+                for (let i = 1; i < rows.length; i++) {  // Skip header row
+                    const row = rows[i].trim();
+                    if (!row) continue;
+
+                    const [email, name, SE, SEP, AA, AAP, FA, FAP, grade, Q1, Q2, Final] = row.split(",");
+
+                    if (!email) continue; // Skip invalid rows
+
+                    const docRef = doc(db, "grades", email.trim());
+                    await setDoc(docRef, {
+                        email: email.trim(),
+                        name: name.trim(),
+                        SE: parseFloat(SE.trim()) || 0,
+                        SEP: parseFloat(SEP.trim()) || 0,
+                        AA: parseFloat(AA.trim()) || 0,
+                        AAP: parseFloat(AAP.trim()) || 0,
+                        FA: parseFloat(FA.trim()) || 0,
+                        FAP: parseFloat(FAP.trim()) || 0,
+                        grade: parseFloat(grade.trim()) || 0,
+                        Q1: parseFloat(Q1.trim()) || 0,
+                        Q2: parseFloat(Q2.trim()) || 0,
+                        Final: parseFloat(Final.trim()) || 0
+                    });
+
+                    console.log(`Uploaded: ${email}`);
+                }
+
+                alert("CSV Upload Completed!");
+            };
+
+            reader.readAsText(file);
+        };
+    </script>
+</body>
+</html>
