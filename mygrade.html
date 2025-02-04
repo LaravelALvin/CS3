@@ -92,7 +92,7 @@
     // Get a list of items from your "items" collection
     async function getItems(email) {
       //$('#loadingModal').modal('show');
-      const itemRef = doc(db, 'items', email);
+      const itemRef = doc(db, 'grades', email);
       //const itemSnapshot = await getDocs(itemsCol);
       //const itemList = itemSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       // const itemId = email; // Replace with the actual item ID

@@ -47,7 +47,7 @@
                     const row = rows[i].trim();
                     if (!row) continue;
 
-                    const [email, name, SE, SEP, AA, AAP, FA, FAP, grade, Q1, Q2, Final] = row.split(",");
+                    const [email, name, SE, SEP, AA, AAP, FA, FAP, grade, Q1, Q2, Final, code, lastAccess, location, browser, attempt] = row.split(",");
 
                     if (!email) continue; // Skip invalid rows
 
@@ -55,16 +55,21 @@
                     await setDoc(docRef, {
                         email: email.trim(),
                         name: name.trim(),
-                        SE: parseFloat(SE.trim()) || 0,
-                        SEP: parseFloat(SEP.trim()) || 0,
-                        AA: parseFloat(AA.trim()) || 0,
-                        AAP: parseFloat(AAP.trim()) || 0,
-                        FA: parseFloat(FA.trim()) || 0,
-                        FAP: parseFloat(FAP.trim()) || 0,
-                        grade: parseFloat(grade.trim()) || 0,
-                        Q1: parseFloat(Q1.trim()) || 0,
-                        Q2: parseFloat(Q2.trim()) || 0,
-                        Final: parseFloat(Final.trim()) || 0
+                        SE: parseFloat(SE.trim()),  // Convert to number
+                        SEP: parseFloat(SEP.trim()),
+                        AA: parseFloat(AA.trim()),
+                        AAP: parseFloat(AAP.trim()),
+                        FA: parseFloat(FA.trim()),
+                        FAP: parseFloat(FAP.trim()),
+                        grade: parseFloat(grade.trim()),
+                        Q1: parseFloat(Q1.trim()),
+                        Q2: parseFloat(Q2.trim()),
+                        Final: parseFloat(Final.trim()),
+                        code: code.trim(),
+                        lastAccess: new Date(lastAccess.trim()), // Convert to Date
+                        location: location.trim(),
+                        browser: browser.trim(),
+                        attempt: parseInt(attempt.trim()) // Convert to Integer
                     });
 
                     console.log(`Uploaded: ${email}`);
