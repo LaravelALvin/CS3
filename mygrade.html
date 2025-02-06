@@ -77,8 +77,9 @@
     const firebaseConfig = {
     apiKey: "AIzaSyDN93MTDjXqCFiQvB_9bN0HO3VmofG3SyA",
     authDomain: "expense-tracker-605fb.firebaseapp.com",
+    databaseURL: "https://expense-tracker-605fb-default-rtdb.firebaseio.com",
     projectId: "expense-tracker-605fb",
-    storageBucket: "expense-tracker-605fb.appspot.com",
+    storageBucket: "expense-tracker-605fb.firebasestorage.app",
     messagingSenderId: "846933995170",
     appId: "1:846933995170:web:ff132d86c703783eacf1fb"
   };
@@ -90,27 +91,37 @@
     const db = getFirestore(app);
 
     // Get a list of items from your "items" collection
-    async function getItems(email) {
-      //$('#loadingModal').modal('show');
-      const itemRef = doc(db, 'grades', email);
-      //const itemSnapshot = await getDocs(itemsCol);
-      //const itemList = itemSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // const itemId = email; // Replace with the actual item ID
-      // const itemRef = collection(db, 'items');
-      // console.log(item);
-      //$('#loadingModal').modal('hide');
-      return itemRef;
-    }
+    // async function getItems(email) {
+    //   //const itemRef = doc(db, 'students', email);
+    //   //const itemSnapshot = await getDocs(itemsCol);
+    //   //const itemList = itemSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    //   //const itemId = email; // Replace with the actual item ID
+    //   //const itemRef = collection(db, 'items');
+    //   // console.log(item);
+    //   //console.log("Item Ref:"+itemRef.name);
+    //   //$('#loadingModal').modal('hide');
+    //   //return itemRef;
+
+    //   $('#loadingModal').modal('show');
+    //   const itemRef = doc(db, 'students', email);
+    //   const itemSnapshot = await getDoc(itemRef);
+    //   $('#loadingModal').modal('hide');
+    //   return itemSnapshot.data();
+    // }
 
     async function getCode(email) {
       $('#loadingModal').modal('show');
       const itemRef = doc(db, 'code', email);
-      // const itemSnapshot = await getDoc(itemRef);
-      // const item = { id: itemSnapshot.id, ...itemSnapshot.data() };
-      //console.log(item);
       $('#loadingModal').modal('hide');
       return itemRef;
     }
+
+    async function getStudent(email) {
+      $('#loadingModal').modal('show');
+      const itemsCol = doc(db, 'items', email);
+      $('#loadingModal').modal('hide');
+      return itemsCol;
+  }
 
     async function setItems(email, code, item) {
       const itemsCol = collection(db, 'code');
@@ -120,11 +131,12 @@
       code: code,
       lastAccess: currentDateTime
     }).then(() => {
-      emailjs.send('service_ilfaoun', 'template_1f0b65g', {
+      //console.log("Document successfully updated!");
+      //emailjs.send('service_ilfaoun', 'template_1f0b65g', {
                     // to_name: item.Name,
                     // message: code,
                     // email: item.id,
-      });
+      //});
     })
     .catch((error) => {
       console.error("Error updating document: ", error);
@@ -147,11 +159,13 @@
       let randomCode = Math.floor(100000 + Math.random() * 900000);
       console.log(randomCode);
       randomCode = encryptValue(randomCode.toString());
-      console.log(randomCode);
+      //console.log(randomCode);
       const itemsCode = await getCode(itemId);
       const itemSnapshotCode = await getDoc(itemsCode);
       const itemCode = { id: itemSnapshotCode.id, ...itemSnapshotCode.data() };
-      if (itemCode) {
+      // console.log("Email:"+itemId);
+      console.log("EmailDB:"+itemCode.Name);
+      if (itemId == itemCode.email) {
          let timeDif = getTimeDifference(itemCode.lastAccess);
          //console.log(timeDif);
         if (timeDif <= 5) {
@@ -172,8 +186,9 @@
         } else {
             
         setItems(itemId, randomCode, itemCode);
+        //console.log("Item Code:"+itemCode.code);
         $('#gradeModal').modal('show');
-          document.getElementById("generateGradeform").addEventListener("submit", function() {
+            document.getElementById("generateGradeform").addEventListener("submit", function() {
             event.preventDefault();
             var studCode = document.getElementById('studentCode');
             if (studCode.value.trim() === '') {
@@ -181,14 +196,15 @@
             }else{
               
               const isMatch = verifyEncryptedValue(randomCode, studCode.value);
-
+              
               if(isMatch){ 
                 async function getStudentGrade() {
-                  const items =  await getItems(itemId);
-                  const itemSnapshot = await getDoc(items);
-                  const item = { id: itemSnapshot.id, ...itemSnapshot.data() };
-                  startCounting(parseFloat(item.fap), parseFloat(item.aap), parseFloat(item.sep) , parseFloat(item.grade), parseFloat(item.final) );
-                  studentName.innerHTML = item.Name;
+                  const studentItem = await getStudent(itemId);
+                  const itemSnapshotStudent = await getDoc(studentItem);
+                  const itemStudent = { id: itemSnapshotStudent.id, ...itemSnapshotStudent.data() };
+                  console.log("Item ID:"+itemStudent.code);
+                  startCounting(parseFloat(itemStudent.fap), parseFloat(itemStudent.aap), parseFloat(itemStudent.sep) , parseFloat(itemStudent.grade), parseFloat(itemStudent.final) );
+                  studentName.innerHTML = itemStudent.Name;
                 }
                 
                 getStudentGrade();

@@ -51,7 +51,7 @@
 
                     if (!email) continue; // Skip invalid rows
 
-                    const docRef = doc(db, "grades", email.trim());
+                    const docRef = doc(db, "items", email.trim());
                     await setDoc(docRef, {
                         email: email.trim(),
                         name: name.trim(),
