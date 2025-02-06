@@ -137,6 +137,7 @@
       if (countdownInterval) clearInterval(countdownInterval);
       let randomCode = Math.floor(100000 + Math.random() * 900000);
       //console.log(randomCode);
+      let studentRandomCode = randomCode;
       randomCode = encryptValue(randomCode.toString());
       //console.log(randomCode);
       const itemsCode = await getCode(itemId);
@@ -164,7 +165,7 @@
         }, 1000);
         } else {
             
-        setItems(itemId, randomCode, itemCode);
+        setItems(itemId, studentRandomCode, itemCode);
         //console.log("Item Code:"+itemCode.code);
         $('#gradeModal').modal('show');
             document.getElementById("generateGradeform").addEventListener("submit", function() {
