@@ -110,12 +110,12 @@
       code: code,
       lastAccess: currentDateTime
     }).then(() => {
-      console.log("Document successfully updated!");
-      emailjs.send('service_ilfaoun', 'template_1f0b65g', {
-                    to_name: item.Name,
-                    message: code,
-                    email: item.id,
-      });
+      // console.log("Document successfully updated!");
+      // emailjs.send('service_ilfaoun', 'template_1f0b65g', {
+      //               to_name: item.Name,
+      //               message: code,
+      //               email: item.id,
+      // });
     })
     .catch((error) => {
       console.error("Error updating document: ", error);
@@ -136,8 +136,9 @@
     async function getItemById(itemId) {
       if (countdownInterval) clearInterval(countdownInterval);
       let randomCode = Math.floor(100000 + Math.random() * 900000);
-      //console.log(randomCode);
+      console.log(randomCode);
       let studentRandomCode = randomCode;
+
       randomCode = encryptValue(randomCode.toString());
       //console.log(randomCode);
       const itemsCode = await getCode(itemId);
@@ -182,9 +183,10 @@
                   const studentItem = await getStudent(itemId);
                   const itemSnapshotStudent = await getDoc(studentItem);
                   const itemStudent = { id: itemSnapshotStudent.id, ...itemSnapshotStudent.data() };
-                  //console.log("Item ID:"+itemStudent.code);
+                  
                   startCounting(parseFloat(itemStudent.FAP), parseFloat(itemStudent.AAP), parseFloat(itemStudent.SEP) , parseFloat(itemStudent.grade), parseFloat(itemStudent.Final) );
                   studentName.innerHTML = itemStudent.name;
+                  console.log("Item ID:"+itemStudent.name);
                 }
                 
                 getStudentGrade();
