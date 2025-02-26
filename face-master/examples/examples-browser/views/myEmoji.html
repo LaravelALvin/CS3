@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="face-api.js"></script>
+  <script src="js/commons.js"></script>
+  <script src="js/faceDetectionControls.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+  <style>
+    .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+            text-align: center;
+        }
+        #emoji-image {
+            width: 150px;
+            height: 150px;
+        }
+        video {
+            width: 120%;
+            max-width: 1200px;
+            height: auto;
+        }
+        canvas {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+  <div id="navbar"></div>
+  <div class="center-content page-container">
+    <div class="container">
+      <!-- Left Column: Age and Emoji -->
+      <div id="detection" class="column">
+          <h1>Age: <span id="myAge"></span></h1>
+          <img id="emoji-image" src="" alt="Expression Emoji">
+      </div>
+
+      <!-- Right Column: Video and Canvas -->
+      <div class="column">
+          <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
+          <canvas id="overlay"></canvas>
+      </div>
+  </div>
+
+  </body>
+
+  <script>
+    let forwardTimes = []
+    let predictedAges = []
+    let withBoxes = true
+
+    function onChangeHideBoundingBoxes(e) {
+      withBoxes = !$(e.target).prop('checked')
+    }
+
+    function updateTimeStats(timeInMs) {
+      forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30)
+      const avgTimeInMs = forwardTimes.reduce((total, t) => total + t) / forwardTimes.length
+      $('#time').val(`${Math.round(avgTimeInMs)} ms`)
+      $('#fps').val(`${faceapi.utils.round(1000 / avgTimeInMs)}`)
+    }
+
+    function interpolateAgePredictions(age) {
+      predictedAges = [age].concat(predictedAges).slice(0, 30)
+      const avgPredictedAge = predictedAges.reduce((total, a) => total + a) / predictedAges.length
+      return avgPredictedAge
+    }
+
+    async function onPlay() {
+      const videoEl = $('#inputVideo').get(0)
+
+      if(videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
+        return setTimeout(() => onPlay())
+
+
+      const options = getFaceDetectorOptions()
+
+      const ts = Date.now()
+
+      const ageGender = await faceapi.detectSingleFace(videoEl, options)
+        .withAgeAndGender()
+
+      const faceExpression = await faceapi.detectSingleFace(videoEl, options).withFaceExpressions()
+
+      updateTimeStats(Date.now() - ts)
+
+      if (ageGender) {
+        const canvas = $('#overlay').get(0)
+        const dims = faceapi.matchDimensions(canvas, videoEl, true)
+
+        const resizedResult = faceapi.resizeResults(ageGender, dims)
+        if (withBoxes) {
+          //faceapi.draw.drawDetections(canvas, resizedResult)
+        }
+        const { age, gender, genderProbability } = resizedResult
+
+        // interpolate gender predictions over last 30 frames
+        // to make the displayed age more stable
+        const interpolatedAge = interpolateAgePredictions(age)
+        new faceapi.draw.DrawTextField(
+          [
+            `${faceapi.utils.round(interpolatedAge, 0)} years`,
+            `${gender} (${faceapi.utils.round(genderProbability)})`
+          ],
+          ageGender.detection.box.topLeft
+          
+        )
+        console.log(ageGender.age)
+        $('#myAge').text(Math.floor(ageGender.age));
+      }
+
+      if (faceExpression) {
+        const canvas = $('#overlay').get(0)
+        const dims = faceapi.matchDimensions(canvas, videoEl, true)
+
+        const resizedResult = faceapi.resizeResults(faceExpression, dims)
+        const minConfidence = 0.05
+        if (withBoxes) {
+          //faceapi.draw.drawDetections(canvas, resizedResult)
+        }
+        //faceapi.draw.drawFaceExpressions(canvas, resizedResult, minConfidence)
+       // console.log(faceExpression.expressions);  // Ensure this logs the correct object
+
+        const maxExpression = Object.entries(faceExpression.expressions).reduce((max, current) => current[1] > max[1] ? current : max);
+        console.log(`Max Expression: ${maxExpression[0]} (${maxExpression[1]})`);
+
+        const emojiUrls = {
+            neutral: "emoji/neutral.png",
+            happy: "emoji/happy.png",
+            sad: "emoji/sad.png",
+            angry: "emoji/angry.png",
+            fearful: "emoji/fearful.png",
+            disgusted: "emoji/disgusted.png",
+            surprised: "emoji/surprised.png"
+        };
+        
+        const emojiUrl = emojiUrls[maxExpression[0]] || "https://upload.wikimedia.org/wikipedia/commons/6/6e/Noto_Emoji_Oreo_1f610.svg"; // Default neutral face
+
+        // Update the HTML content
+        document.getElementById("emoji-image").src = emojiUrl;
+        document.getElementById("emoji-image").alt = maxExpression[0];
+
+      }
+
+
+
+      
+      setTimeout(() => onPlay())
+    }
+
+    async function run() {
+      // load face detection and face expression recognition models
+      await changeFaceDetector(TINY_FACE_DETECTOR)
+      await faceapi.nets.ageGenderNet.load('/')
+      await faceapi.loadFaceExpressionModel('/')
+      changeInputSize(224)
+
+      // try to access users webcam and stream the images
+      // to the video element
+      const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
+      const videoEl = $('#inputVideo').get(0)
+      videoEl.srcObject = stream
+
+    }
+
+    function updateResults() {}
+
+    $(document).ready(function() {
+      renderNavBar('#navbar', 'webcam_age_and_gender_recognition')
+      initFaceDetectionControls()
+      run()
+    })
+  </script>
+</body>
+</html>
